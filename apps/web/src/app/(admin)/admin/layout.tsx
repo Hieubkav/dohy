@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { Suspense } from "react";
 import { Refine } from "@refinedev/core";
 import routerProvider from "@refinedev/nextjs-router";
 import { refineConvexDataProvider } from "@/lib/refineDataProvider";
@@ -31,21 +32,25 @@ function Sidebar() {
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
-    <Refine
-      routerProvider={routerProvider}
-      dataProvider={refineConvexDataProvider}
-      resources={[{
-        name: "todos",
-        list: "/admin/todos",
-        create: "/admin/todos/create",
-        edit: "/admin/todos/edit/:id",
-      }]}
-      options={{ syncWithLocation: true, warnWhenUnsavedChanges: false, disableTelemetry: true }}
-    >
-      <div className="flex">
-        <Sidebar />
-        <main className="min-h-svh flex-1 p-6">{children}</main>
-      </div>
-    </Refine>
+    <Suspense fallback={<div className="p-6 text-sm text-muted-foreground">Loading admin...</div>}>
+      <Refine
+        routerProvider={routerProvider}
+        dataProvider={refineConvexDataProvider}
+        resources={[{
+          name: "todos",
+          list: "/admin/todos",
+          create: "/admin/todos/create",
+          edit: "/admin/todos/edit/:id",
+        }]}
+        options={{ syncWithLocation: true, warnWhenUnsavedChanges: false, disableTelemetry: true }}
+      >
+        <div className="flex">
+          <Suspense fallback={<div className="w-60 p-4 text-sm text-muted-foreground">Loading menu...</div>}>
+            <Sidebar />
+          </Suspense>
+          <main className="min-h-svh flex-1 p-6">{children}</main>
+        </div>
+      </Refine>
+    </Suspense>
   );
 }

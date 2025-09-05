@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = "force-dynamic";
 
 import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
@@ -67,4 +68,3 @@ export default function EditTodoPage() {
     </Card>
   );
 }
-

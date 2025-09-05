@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = "force-dynamic";
 
 import { useState } from "react";
 import { useMutation } from "convex/react";
@@ -44,4 +45,3 @@ export default function CreateTodoPage() {
     </Card>
   );
 }
-
