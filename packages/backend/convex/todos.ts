@@ -2,9 +2,16 @@ import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 
 export const getAll = query({
-	handler: async (ctx) => {
-		return await ctx.db.query("todos").collect();
-	},
+    handler: async (ctx) => {
+        return await ctx.db.query("todos").collect();
+    },
+});
+
+export const getById = query({
+    args: { id: v.id("todos") },
+    handler: async (ctx, args) => {
+        return await ctx.db.get(args.id);
+    },
 });
 
 export const create = mutation({
@@ -32,11 +39,22 @@ export const toggle = mutation({
 });
 
 export const deleteTodo = mutation({
-	args: {
-		id: v.id("todos"),
-	},
-	handler: async (ctx, args) => {
-		await ctx.db.delete(args.id);
-		return { success: true };
-	},
+    args: {
+        id: v.id("todos"),
+    },
+    handler: async (ctx, args) => {
+        await ctx.db.delete(args.id);
+        return { success: true };
+    },
+});
+
+export const updateText = mutation({
+    args: {
+        id: v.id("todos"),
+        text: v.string(),
+    },
+    handler: async (ctx, args) => {
+        await ctx.db.patch(args.id, { text: args.text });
+        return { success: true };
+    },
 });
