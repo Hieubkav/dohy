@@ -81,3 +81,30 @@ export const list = query({
     return { items: page, total };
   },
 });
+
+export const getById = query({
+  args: { id: v.id("todos") },
+  handler: async (ctx, { id }) => {
+    return await ctx.db.get(id);
+  },
+});
+
+export const bulkToggle = mutation({
+  args: { ids: v.array(v.id("todos")), completed: v.boolean() },
+  handler: async (ctx, { ids, completed }) => {
+    for (const id of ids) {
+      await ctx.db.patch(id, { completed });
+    }
+    return { success: true, count: ids.length };
+  },
+});
+
+export const bulkDelete = mutation({
+  args: { ids: v.array(v.id("todos")) },
+  handler: async (ctx, { ids }) => {
+    for (const id of ids) {
+      await ctx.db.delete(id);
+    }
+    return { success: true, count: ids.length };
+  },
+});
