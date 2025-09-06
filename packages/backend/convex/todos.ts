@@ -40,3 +40,44 @@ export const deleteTodo = mutation({
 		return { success: true };
 	},
 });
+
+export const updateText = mutation({
+  args: {
+    id: v.id("todos"),
+    text: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.id, { text: args.text });
+    return { success: true };
+  },
+});
+
+export const list = query({
+  args: {
+    search: v.optional(v.string()),
+    status: v.optional(v.union(v.literal("all"), v.literal("active"), v.literal("completed"))),
+    offset: v.number(),
+    limit: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const { search, status = "all", offset, limit } = args;
+    let items = await ctx.db.query("todos").collect();
+
+    // Filter by status
+    if (status === "active") items = items.filter((t) => !t.completed);
+    if (status === "completed") items = items.filter((t) => t.completed);
+
+    // Text search (naive; fine for small datasets)
+    if (search && search.trim().length > 0) {
+      const s = search.trim().toLowerCase();
+      items = items.filter((t) => t.text.toLowerCase().includes(s));
+    }
+
+    // Sort by creation time desc
+    items.sort((a, b) => b._creationTime - a._creationTime);
+
+    const total = items.length;
+    const page = items.slice(offset, offset + limit);
+    return { items: page, total };
+  },
+});
