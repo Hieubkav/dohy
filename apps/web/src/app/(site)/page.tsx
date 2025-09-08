@@ -1,46 +1,121 @@
-"use client";
-import { useQuery } from "convex/react";
-import { api } from "@dohy/backend/convex/_generated/api";
+'use client';
 
-const TITLE_TEXT = `
- ██████╗ ███████╗████████╗████████╗███████╗██████╗
- ██╔══██╗██╔════╝╚══██╔══╝╚══██╔══╝██╔════╝██╔══██╗
- ██████╔╝█████╗     ██║      ██║   █████╗  ██████╔╝
- ██╔══██╗██╔══╝     ██║      ██║   ██╔══╝  ██╔══██╗
- ██████╔╝███████╗   ██║      ██║   ███████╗██║  ██║
- ╚═════╝ ╚══════╝   ╚═╝      ╚═╝   ╚══════╝╚═╝  ╚═╝
+import { useEffect } from 'react';
+import dynamic from 'next/dynamic';
 
- ████████╗    ███████╗████████╗ █████╗  ██████╗██╗  ██╗
- ╚══██╔══╝    ██╔════╝╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝
-    ██║       ███████╗   ██║   ███████║██║     █████╔╝
-    ██║       ╚════██║   ██║   ██╔══██║██║     ██╔═██╗
-    ██║       ███████║   ██║   ██║  ██║╚██████╗██║  ██╗
-    ╚═╝       ╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝
- `;
+// Dynamically import components with lazy loading
+const HeroSection = dynamic(() => import("@/components/sections/HeroSection"), {
+  ssr: false,
+  loading: () => <div className="h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center"><div className="text-white">Đang tải...</div></div>
+});
+
+const WordSliderSection = dynamic(() => import("@/components/sections/WordSliderSection"), {
+  ssr: false,
+  loading: () => <div className="h-32 bg-gray-900 flex items-center justify-center"><div className="text-white">Đang tải...</div></div>
+});
+
+const GalleryPictureSection = dynamic(() => import("@/components/sections/GalleryPictureSection"), {
+  ssr: false,
+  loading: () => <div className="h-96 bg-gray-900 flex items-center justify-center"><div className="text-white">Đang tải...</div></div>
+});
+
+const YourAdviceSection = dynamic(() => import("@/components/sections/YourAdviceSection"), {
+  ssr: false,
+  loading: () => <div className="h-96 bg-black flex items-center justify-center"><div className="text-white">Đang tải...</div></div>
+});
+
+const StatsSection = dynamic(() => import("@/components/sections/StatsSection"), {
+  ssr: false,
+  loading: () => <div className="h-64 bg-gray-900 flex items-center justify-center"><div className="text-white">Đang tải...</div></div>
+});
+
+const ServicesSection = dynamic(() => import("@/components/sections/ServicesSection"), {
+  ssr: false,
+  loading: () => <div className="h-screen bg-black flex items-center justify-center"><div className="text-white">Đang tải...</div></div>
+});
+
+const WhyChooseUsSection = dynamic(() => import("@/components/sections/WhyChooseUsSection"), {
+  ssr: false,
+  loading: () => <div className="h-screen bg-black flex items-center justify-center"><div className="text-white">Đang tải...</div></div>
+});
+
+const Why3DVisualsSection = dynamic(() => import("@/components/sections/Why3DVisualsSection"), {
+  ssr: false,
+  loading: () => <div className="h-screen bg-black flex items-center justify-center"><div className="text-white">Đang tải...</div></div>
+});
+
+const TurningSection = dynamic(() => import("@/components/sections/TurningSection"), {
+  ssr: false,
+  loading: () => <div className="h-screen bg-black flex items-center justify-center"><div className="text-white">Đang tải...</div></div>
+});
+
+const WeWorkSection = dynamic(() => import("@/components/sections/WeWorkSection"), {
+  ssr: false,
+  loading: () => <div className="h-screen bg-black flex items-center justify-center"><div className="text-white">Đang tải...</div></div>
+});
+
+const StayControlSection = dynamic(() => import("@/components/sections/StayControlSection"), {
+  ssr: false,
+  loading: () => <div className="h-screen bg-black flex items-center justify-center"><div className="text-white">Đang tải...</div></div>
+});
+
+const ContactFormSection = dynamic(() => import("@/components/sections/ContactFormSection"), {
+  ssr: false,
+  loading: () => <div className="h-screen bg-black flex items-center justify-center"><div className="text-white">Đang tải...</div></div>
+});
 
 export default function Home() {
-	const healthCheck = useQuery(api.healthCheck.get);
+  // Xử lý scroll đến section khi có hash trong URL
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash) {
+      // Delay để đảm bảo DOM đã render xong
+      setTimeout(() => {
+        const element = document.querySelector(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
+  }, []);
+  
+  return (
+    <main className="min-h-screen">
+      {/* Hero Section với video background */}
+      <HeroSection />
 
-	return (
-		<div className="container mx-auto max-w-3xl px-4 py-2">
-			<pre className="overflow-x-auto font-mono text-sm">{TITLE_TEXT}</pre>
-			<div className="grid gap-6">
-				<section className="rounded-lg border p-4">
-					<h2 className="mb-2 font-medium">API Status</h2>
-					<div className="flex items-center gap-2">
-						<div
-							className={`h-2 w-2 rounded-full ${healthCheck === "OK" ? "bg-green-500" : healthCheck === undefined ? "bg-orange-400" : "bg-red-500"}`}
-						/>
-						<span className="text-sm text-muted-foreground">
-							{healthCheck === undefined
-								? "Checking..."
-								: healthCheck === "OK"
-									? "Connected"
-									: "Error"}
-						</span>
-					</div>
-				</section>
-			</div>
-		</div>
-	);
+      {/* Word Slider Section */}
+      <WordSliderSection />
+
+      {/* Gallery Picture Section */}
+      <GalleryPictureSection />
+
+      {/* Your Advice Section */}
+      <YourAdviceSection />
+
+      {/* Stats Section */}
+      <StatsSection />
+
+      {/* Services Section */}
+      <ServicesSection />
+
+      {/* Why Choose Us Section */}
+      <WhyChooseUsSection />
+
+      {/* Why 3D Visuals Section */}
+      <Why3DVisualsSection />
+
+      {/* Turning Section */}
+      <TurningSection />
+
+      {/* We Work Section */}
+      <WeWorkSection />
+
+      {/* Stay Control Section */}
+      <StayControlSection />
+
+      {/* Contact Form Section */}
+      <ContactFormSection />
+    </main>
+  );
 }

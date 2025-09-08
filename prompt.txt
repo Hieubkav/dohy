@@ -1,0 +1,24 @@
+lỗi 
+## Error Type
+Runtime Error
+
+## Error Message
+Invalid src prop (https://stepv.studio/wp-content/uploads/2025/03/jomalonewithouttext-min-819x1024.png) on `next/image`, hostname "stepv.studio" is not configured under images in your `next.config.js`
+See more info: https://nextjs.org/docs/messages/next-image-unconfigured-host
+
+
+    at <unknown> (src/components/sections/ServicesSection.tsx:109:19)
+    at Array.map (<anonymous>:null:null)
+    at ServicesSection (src/components/sections/ServicesSection.tsx:98:21)
+    at Home (src/app/(site)/page.tsx:50:7)
+
+## Code Frame
+  107 |                 {/* Background Image */}
+  108 |                 <div className="absolute inset-0">
+> 109 |                   <Image
+      |                   ^
+  110 |                     src={service.image}
+  111 |                     alt={service.title}
+  112 |                     fill
+
+Next.js version: 15.5.0 (Turbopack)
