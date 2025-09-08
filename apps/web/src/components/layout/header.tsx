@@ -63,7 +63,7 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         }
       } else {
         // Nếu ở trang khác, chuyển về trang chủ với hash
-        router.push(`/${href}`);
+        router.push((`/${href}`) as any);
       }
     }
     setIsMobileMenuOpen(false);
@@ -436,4 +436,3 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
 };
 
 export default Header;
-
