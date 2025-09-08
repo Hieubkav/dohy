@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Settings, UpdateSettingsRequest, SettingKey } from '@/types/settings';
+import type { Settings, UpdateSettingsRequest, SettingKey } from '@/types/settings';
 
 interface UseSettingsReturn {
   settings: Settings | null;
@@ -94,4 +94,3 @@ export function useSiteSettings(): UseSettingsReturn {
     getSetting,
   };
 }
-

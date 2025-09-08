@@ -97,22 +97,32 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             <ul className="flex items-center justify-center space-x-1 w-full">
               {menuItems.map((item, index) => (
                 <li key={index} className="flex-shrink-0">
-                  <Link
-                    href={item.href}
-                    onClick={(e) => {
-                      if (item.href.startsWith('#')) {
+                  {item.href.startsWith('#') ? (
+                    <a
+                      onClick={(e) => {
                         e.preventDefault();
                         handleLinkClick(item.href);
-                      }
-                    }}
-                    className={`px-3 py-2 uppercase font-semibold text-sm whitespace-nowrap transition-colors ${
-                      item.isActive
-                        ? 'text-white border-b-2 border-white'
-                        : 'text-white hover:text-gray-300'
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
+                      }}
+                      className={`px-3 py-2 uppercase font-semibold text-sm whitespace-nowrap transition-colors ${
+                        item.isActive
+                          ? 'text-white border-b-2 border-white'
+                          : 'text-white hover:text-gray-300'
+                      }`}
+                    >
+                      {item.label}
+                    </a>
+                  ) : (
+                    <Link
+                      href={item.href as any}
+                      className={`px-3 py-2 uppercase font-semibold text-sm whitespace-nowrap transition-colors ${
+                        item.isActive
+                          ? 'text-white border-b-2 border-white'
+                          : 'text-white hover:text-gray-300'
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
@@ -193,22 +203,32 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             <ul className="flex items-center justify-center space-x-1 w-full">
               {menuItems.map((item, index) => (
                 <li key={index} className="flex-shrink-0">
-                  <Link
-                    href={item.href}
-                    onClick={(e) => {
-                      if (item.href.startsWith('#')) {
+                  {item.href.startsWith('#') ? (
+                    <a
+                      onClick={(e) => {
                         e.preventDefault();
                         handleLinkClick(item.href);
-                      }
-                    }}
-                    className={`px-3 py-2 uppercase font-semibold text-sm whitespace-nowrap transition-colors ${
-                      item.isActive
-                        ? 'text-white border-b-2 border-white'
-                        : 'text-white hover:text-gray-300'
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
+                      }}
+                      className={`px-3 py-2 uppercase font-semibold text-sm whitespace-nowrap transition-colors ${
+                        item.isActive
+                          ? 'text-white border-b-2 border-white'
+                          : 'text-white hover:text-gray-300'
+                      }`}
+                    >
+                      {item.label}
+                    </a>
+                  ) : (
+                    <Link
+                      href={item.href as any}
+                      className={`px-3 py-2 uppercase font-semibold text-sm whitespace-nowrap transition-colors ${
+                        item.isActive
+                          ? 'text-white border-b-2 border-white'
+                          : 'text-white hover:text-gray-300'
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
@@ -298,25 +318,36 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             <ul className="space-y-4">
               {menuItems.map((item, index) => (
                 <li key={index}>
-                  <Link
-                    href={item.href}
-                    onClick={(e) => {
-                      if (item.href.startsWith('#')) {
+                  {item.href.startsWith('#') ? (
+                    <a
+                      onClick={(e) => {
                         e.preventDefault();
                         handleLinkClick(item.href);
-                      } else {
+                      }}
+                      className={`block px-4 py-3 uppercase font-semibold text-sm transition-colors rounded-lg ${
+                        item.isActive
+                          ? 'text-black bg-white'
+                          : 'text-white hover:bg-white/10'
+                      }`}
+                    >
+                      {item.label}
+                    </a>
+                  ) : (
+                    <Link
+                      href={item.href as any}
+                      onClick={() => {
                         setIsMobileMenuOpen(false);
                         document.body.style.overflow = '';
-                      }
-                    }}
-                    className={`block px-4 py-3 uppercase font-semibold text-sm transition-colors rounded-lg ${
-                      item.isActive
-                        ? 'text-black bg-white'
-                        : 'text-white hover:bg-white/10'
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
+                      }}
+                      className={`block px-4 py-3 uppercase font-semibold text-sm transition-colors rounded-lg ${
+                        item.isActive
+                          ? 'text-black bg-white'
+                          : 'text-white hover:bg-white/10'
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
