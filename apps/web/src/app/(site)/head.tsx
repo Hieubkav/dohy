@@ -1,6 +1,11 @@
 export default function Head() {
   return (
     <>
+      {/* Font Awesome for social icons */}
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      />
       {/* Preconnect to external domains */}
       <link rel="preconnect" href="https://stepv.studio" />
       <link rel="preconnect" href="https://images.unsplash.com" />
@@ -20,4 +25,3 @@ export default function Head() {
     </>
   );
 }
-

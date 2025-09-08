@@ -54,7 +54,7 @@ export default function SiteLayout({
   return (
     <div className="flex flex-col min-h-screen font-sans antialiased">
         <Header />
-        <main className="flex-1 pt-[110px]">{children}</main>
+        <main className="flex-1">{children}</main>
         <Footer />
     </div>
   );

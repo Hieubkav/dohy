@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
+import { useSiteSettings } from '@/hooks/useSiteConfig';
 import XIcon from '@/components/ui/XIcon';
 
 interface MenuItem {
@@ -21,6 +22,7 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const { getSetting } = useSiteSettings();
 
   const menuItems: MenuItem[] = [
     { label: 'TRANG CHỦ', href: '/', isActive: pathname === '/' },
@@ -51,7 +53,7 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
     }
   };
 
-  const handleHashLinkClick = (href: string) => {
+  const handleLinkClick = (href: string) => {
     if (href.startsWith('#')) {
       // Nếu đang ở trang chủ, scroll đến section
       if (pathname === '/') {
@@ -61,7 +63,7 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         }
       } else {
         // Nếu ở trang khác, chuyển về trang chủ với hash
-        router.push(`/${href}` as any);
+        router.push(`/${href}`);
       }
     }
     setIsMobileMenuOpen(false);
@@ -75,7 +77,7 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         id="header-top"
         className={`font-sans absolute top-0 left-0 w-full z-40 transition-opacity duration-300 ${className}`}
       >
-        <div className="flex items-center justify-between gap-2 w-full min-h-[110px] px-6 bg-black/30 backdrop-blur-sm border-b border-white/80">
+        <div className="flex items-center justify-between gap-2 w-full min-h-[110px] px-6 bg-black/50 backdrop-blur-lg">
           {/* Logo */}
           <div className="w-1/5 flex-shrink-0">
             <Link href="/">
@@ -95,32 +97,22 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             <ul className="flex items-center justify-center space-x-1 w-full">
               {menuItems.map((item, index) => (
                 <li key={index} className="flex-shrink-0">
-                  {item.href.startsWith('#') ? (
-                    <a
-                      onClick={(e) => {
+                  <Link
+                    href={item.href}
+                    onClick={(e) => {
+                      if (item.href.startsWith('#')) {
                         e.preventDefault();
-                        handleHashLinkClick(item.href);
-                      }}
-                      className={`px-3 py-2 uppercase font-semibold text-sm whitespace-nowrap transition-colors cursor-pointer ${
-                        item.isActive
-                          ? 'text-white border-b-2 border-white'
-                          : 'text-white hover:text-gray-300'
-                      }`}
-                    >
-                      {item.label}
-                    </a>
-                  ) : (
-                    <Link
-                      href={item.href as any}
-                      className={`px-3 py-2 uppercase font-semibold text-sm whitespace-nowrap transition-colors ${
-                        item.isActive
-                          ? 'text-white border-b-2 border-white'
-                          : 'text-white hover:text-gray-300'
-                      }`}
-                    >
-                      {item.label}
-                    </Link>
-                  )}
+                        handleLinkClick(item.href);
+                      }
+                    }}
+                    className={`px-3 py-2 uppercase font-semibold text-sm whitespace-nowrap transition-colors ${
+                      item.isActive
+                        ? 'text-white border-b-2 border-white'
+                        : 'text-white hover:text-gray-300'
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -128,20 +120,47 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
 
           {/* Right Side - Contact Button, Social Icons & Mobile Menu */}
           <div className="flex items-center justify-end w-1/5 flex-shrink-0 gap-3">
-            <a
+            {/* Social Icons */}
+            <div className="hidden lg:flex items-center gap-2">
+              {[
+                { icon: 'fab fa-youtube', href: getSetting('youtube_url', 'https://www.youtube.com/@dohystudio'), color: 'text-red-500' },
+                { icon: 'fab fa-tiktok', href: getSetting('tiktok_url', 'https://www.tiktok.com/@dohystudio'), color: 'text-white' },
+                { icon: 'fab fa-facebook', href: getSetting('facebook_url', 'https://www.facebook.com/profile.php?id=61574798173124&sk=friends_likes'), color: 'text-blue-600' },
+                { icon: 'fab fa-instagram', href: getSetting('instagram_url', 'https://www.instagram.com/dohy_studio/'), color: 'text-pink-500' },
+                { icon: 'fab fa-pinterest', href: getSetting('pinterest_url'), color: 'text-red-600' },
+                { icon: 'fab fa-x-twitter', href: getSetting('x_url'), color: 'text-white' }
+              ].filter(social => social.href).map((social, index) => (
+                <a
+                  key={index}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`w-8 h-8 ${social.color} hover:scale-110 transition-all duration-300 flex items-center justify-center`}
+                >
+                  {social.icon === 'fab fa-x-twitter' ? (
+                    <XIcon className="text-lg" size={18} />
+                  ) : (
+                    <i className={`${social.icon} text-lg`}></i>
+                  )}
+                </a>
+              ))}
+            </div>
+
+            <Link
+              href="#contact"
               onClick={(e) => {
                 e.preventDefault();
-                handleHashLinkClick('#contact');
+                handleLinkClick('#contact');
               }}
-              className="hidden lg:inline-block uppercase text-xs font-semibold text-black bg-white rounded-full px-6 py-3 transition-transform hover:scale-105 cursor-pointer"
+              className="hidden lg:inline-block uppercase text-xs font-semibold text-black bg-white rounded-full px-6 py-3 transition-transform hover:scale-105"
             >
-              Liên Hệ
-            </a>
+              Liên hệ
+            </Link>
             <button
               onClick={handleMobileMenuToggle}
               className="lg:hidden text-white text-2xl focus:outline-none"
             >
-              {isMobileMenuOpen ? <XIcon size={24} /> : <MenuIcon />}
+              <i className={`fas ${isMobileMenuOpen ? 'fa-times' : 'fa-bars'}`}></i>
             </button>
           </div>
         </div>
@@ -174,32 +193,22 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             <ul className="flex items-center justify-center space-x-1 w-full">
               {menuItems.map((item, index) => (
                 <li key={index} className="flex-shrink-0">
-                  {item.href.startsWith('#') ? (
-                    <a
-                      onClick={(e) => {
+                  <Link
+                    href={item.href}
+                    onClick={(e) => {
+                      if (item.href.startsWith('#')) {
                         e.preventDefault();
-                        handleHashLinkClick(item.href);
-                      }}
-                      className={`px-3 py-2 uppercase font-semibold text-sm whitespace-nowrap transition-colors cursor-pointer ${
-                        item.isActive
-                          ? 'text-white border-b-2 border-white'
-                          : 'text-white hover:text-gray-300'
-                      }`}
-                    >
-                      {item.label}
-                    </a>
-                  ) : (
-                    <Link
-                      href={item.href as any}
-                      className={`px-3 py-2 uppercase font-semibold text-sm whitespace-nowrap transition-colors ${
-                        item.isActive
-                          ? 'text-white border-b-2 border-white'
-                          : 'text-white hover:text-gray-300'
-                      }`}
-                    >
-                      {item.label}
-                    </Link>
-                  )}
+                        handleLinkClick(item.href);
+                      }
+                    }}
+                    className={`px-3 py-2 uppercase font-semibold text-sm whitespace-nowrap transition-colors ${
+                      item.isActive
+                        ? 'text-white border-b-2 border-white'
+                        : 'text-white hover:text-gray-300'
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -207,20 +216,47 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
 
           {/* Right Side - Contact Button, Social Icons & Mobile Menu */}
           <div className="flex items-center justify-end w-1/5 flex-shrink-0 gap-3">
-            <a
+            {/* Social Icons */}
+            <div className="hidden lg:flex items-center gap-2">
+              {[
+                { icon: 'fab fa-youtube', href: getSetting('youtube_url', 'https://www.youtube.com/@dohystudio'), color: 'text-red-500' },
+                { icon: 'fab fa-tiktok', href: getSetting('tiktok_url', 'https://www.tiktok.com/@dohystudio'), color: 'text-white' },
+                { icon: 'fab fa-facebook', href: getSetting('facebook_url', 'https://www.facebook.com/profile.php?id=61574798173124&sk=friends_likes'), color: 'text-blue-600' },
+                { icon: 'fab fa-instagram', href: getSetting('instagram_url', 'https://www.instagram.com/dohy_studio/'), color: 'text-pink-500' },
+                { icon: 'fab fa-pinterest', href: getSetting('pinterest_url'), color: 'text-red-600' },
+                { icon: 'fab fa-x-twitter', href: getSetting('x_url'), color: 'text-white' }
+              ].filter(social => social.href).map((social, index) => (
+                <a
+                  key={index}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`w-8 h-8 ${social.color} hover:scale-110 transition-all duration-300 flex items-center justify-center`}
+                >
+                  {social.icon === 'fab fa-x-twitter' ? (
+                    <XIcon className="text-lg" size={18} />
+                  ) : (
+                    <i className={`${social.icon} text-lg`}></i>
+                  )}
+                </a>
+              ))}
+            </div>
+
+            <Link
+              href="#contact"
               onClick={(e) => {
                 e.preventDefault();
-                handleHashLinkClick('#contact');
+                handleLinkClick('#contact');
               }}
-              className="hidden lg:inline-block uppercase text-xs font-semibold text-black bg-white rounded-full px-6 py-3 transition-transform hover:scale-105 cursor-pointer"
+              className="hidden lg:inline-block uppercase text-xs font-semibold text-black bg-white rounded-full px-6 py-3 transition-transform hover:scale-105"
             >
-              Liên Hệ
-            </a>
+              Liên hệ
+            </Link>
             <button
               onClick={handleMobileMenuToggle}
               className="lg:hidden text-white text-2xl focus:outline-none"
             >
-              {isMobileMenuOpen ? <XIcon size={24} /> : <MenuIcon />}
+              <i className={`fas ${isMobileMenuOpen ? 'fa-times' : 'fa-bars'}`}></i>
             </button>
           </div>
         </div>
@@ -253,7 +289,7 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               onClick={handleMobileMenuToggle}
               className="text-white text-2xl focus:outline-none"
             >
-              <XIcon size={24} />
+              <i className="fas fa-times"></i>
             </button>
           </div>
 
@@ -262,51 +298,65 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             <ul className="space-y-4">
               {menuItems.map((item, index) => (
                 <li key={index}>
-                  {item.href.startsWith('#') ? (
-                    <a
-                      onClick={(e) => {
+                  <Link
+                    href={item.href}
+                    onClick={(e) => {
+                      if (item.href.startsWith('#')) {
                         e.preventDefault();
-                        handleHashLinkClick(item.href);
-                      }}
-                      className={`block px-4 py-3 uppercase font-semibold text-sm transition-colors rounded-lg cursor-pointer ${
-                        item.isActive
-                          ? 'text-black bg-white'
-                          : 'text-white hover:bg-white/10'
-                      }`}
-                    >
-                      {item.label}
-                    </a>
-                  ) : (
-                    <Link
-                      href={item.href as any}
-                      onClick={() => {
+                        handleLinkClick(item.href);
+                      } else {
                         setIsMobileMenuOpen(false);
                         document.body.style.overflow = '';
-                      }}
-                      className={`block px-4 py-3 uppercase font-semibold text-sm transition-colors rounded-lg ${
-                        item.isActive
-                          ? 'text-black bg-white'
-                          : 'text-white hover:bg-white/10'
-                      }`}
-                    >
-                      {item.label}
-                    </Link>
-                  )}
+                      }
+                    }}
+                    className={`block px-4 py-3 uppercase font-semibold text-sm transition-colors rounded-lg ${
+                      item.isActive
+                        ? 'text-black bg-white'
+                        : 'text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>
 
             {/* Mobile Contact Button */}
             <div className="mt-8">
-              <a
+              <Link
+                href="#contact"
                 onClick={(e) => {
                   e.preventDefault();
-                  handleHashLinkClick('#contact');
+                  handleLinkClick('#contact');
                 }}
-                className="block w-full text-center uppercase text-sm font-semibold text-black bg-white rounded-full px-6 py-3 transition-transform hover:scale-105 cursor-pointer"
+                className="block w-full text-center uppercase text-sm font-semibold text-black bg-white rounded-full px-6 py-3 transition-transform hover:scale-105"
               >
-                Liên Hệ
-              </a>
+                Liên hệ
+              </Link>
+            </div>
+
+            {/* Social Links */}
+            <div className="flex space-x-4 mt-8 justify-center">
+              {[
+                { icon: 'fab fa-youtube', href: getSetting('youtube_url', 'https://www.youtube.com/@dohystudio') },
+                { icon: 'fab fa-tiktok', href: getSetting('tiktok_url', 'https://www.tiktok.com/@dohystudio') },
+                { icon: 'fab fa-facebook', href: getSetting('facebook_url', 'https://www.facebook.com/profile.php?id=61574798173124&sk=friends_likes') },
+                { icon: 'fab fa-instagram', href: getSetting('instagram_url', 'https://www.instagram.com/dohy_studio/') },
+                { icon: 'fab fa-pinterest', href: getSetting('pinterest_url') },
+                { icon: 'fab fa-x-twitter', href: getSetting('x_url') }
+              ].filter(social => social.href).map((social, index) => (
+                <a
+                  key={index}
+                  href={social.href}
+                  className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-300"
+                >
+                  {social.icon === 'fab fa-x-twitter' ? (
+                    <XIcon className="text-white text-lg" size={18} />
+                  ) : (
+                    <i className={`${social.icon} text-white text-lg`}></i>
+                  )}
+                </a>
+              ))}
             </div>
           </nav>
         </div>
@@ -385,23 +435,5 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   );
 };
 
-// Menu icon component
-const MenuIcon = () => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    width="24" 
-    height="24" 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round"
-  >
-    <line x1="4" x2="20" y1="12" y2="12" />
-    <line x1="4" x2="20" y1="6" y2="6" />
-    <line x1="4" x2="20" y1="18" y2="18" />
-  </svg>
-);
-
 export default Header;
+
